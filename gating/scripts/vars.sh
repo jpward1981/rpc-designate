@@ -17,7 +17,7 @@
 export DEPLOY_AIO="yes"
 
 # rpc-openstack base directory
-export OS_BASE_DIR=/opt/rpc-opentack
+export OS_BASE_DIR=/opt/rpc-openstack
 
 # The MY_BASE_DIR needs to be set to ensure that the scripts
 # know it and use this checkout appropriately.
