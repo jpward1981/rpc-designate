@@ -13,6 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# The scripts expects the git clone to be at /opt/rpc-designate, so we link
+# the current folder there.
+if [[ "${PWD}" != "/opt/rpc-designate" ]]; then
+  ln -sfn ${PWD} /opt/rpc-designate
+fi
+
 # Use and AIO for gate testing
 export DEPLOY_AIO="yes"
 
@@ -34,4 +40,4 @@ export DESIGNATE_TEMP_DIR=/var/tmp/
 export ANSIBLE_PARAMETERS=${ANSIBLE_PARAMETERS:--v}
 
 # Pin RPC-Release to 14.3
-export RPC_RELEASE="r14.3.0"
+export RPC_RELEASE="r14.6.0"

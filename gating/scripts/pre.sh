@@ -30,11 +30,15 @@ if [ ! -d ${OS_BASE_DIR} ]; then
   git clone --recursive -b ${RPC_RELEASE} https://github.com/rcbops/rpc-openstack ${OS_BASE_DIR}
 fi
 
+# Fix a python-ldap issue
+echo "python-ldap==2.5.2" >> ${OS_BASE_DIR}/openstack-ansible/global-requirement-pins.txt
+
 # Make sure that we are in the base dir and deploy openstack aio
 cd ${OS_BASE_DIR}
 ${OS_BASE_DIR}/scripts/deploy.sh
 
 # Install Designate
+cd ${MY_BASE_DIR}
 ${MY_BASE_DIR}/scripts/deploy.sh
 
 # We may need this later, right now I don't run any tempest tests
