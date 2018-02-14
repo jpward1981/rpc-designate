@@ -23,29 +23,29 @@
     delegate_to: "{{ physical_host }}"  
     when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == '16.04'
 
-  - name: Enable forwarding for port mdns server
+  - name: Define PREROUTING DNAT for mdns server
     iptables:
-      chain: FORWARD
-      in_interface: "{{ management_bridge }}"
+      table: nat
+      chain: PREROUTING
+      in_interface: "{{ hostvars[physical_host]['ansible_default_ipv4']['interface'] }}"
       protocol: "{{ item }}"
       destination_port: 53
-      ctstate: NEW,ESTABLISHED
-      jump: ACCEPT
+      jump: DNAT
+      to_destination: "{{ ansible_default_ipv4['address']}}:53"
     delegate_to: "{{ physical_host }}"
     with_items:
       - tcp
       - udp
 
-  - name: Define PREROUTING DNAT for mdns server
-    iptables:
-      table: nat
-      chain: PREROUTING
-      in_interface: "{{ management_bridge }}"
-      protocol: "{{ item }}"
-      destination_port: 53
-      jump: DNAT
-      to_destination: "{{ ansible_default_ipv4['address']}}"
+  - name: save iptables rules (Ubuntu 16.04)
+    command: netfilter-persistent save
+    ignore_errors: yes
     delegate_to: "{{ physical_host }}"
-    with_items:
-      - tcp
-      - udp
+    when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == '16.04'
+
+  - name: save iptables rules (CentOS & RHEL)
+    command: service iptables save
+    args:
+      warn: False # since we use save service module doesn't apply
+    delegate_to: "{{ physical_host }}"
+    when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
