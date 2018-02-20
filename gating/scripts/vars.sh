@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Copyright 2014-2017 , Rackspace US, Inc.
+# Copyright 2014-2018 , Rackspace US, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -32,13 +32,6 @@ export MY_BASE_DIR=/opt/rpc-designate/
 # We want the role downloads to be done via git
 export ANSIBLE_ROLE_FETCH_MODE="git-clone"
 
-# Octavia tmp dir
-export DESIGNATE_TEMP_DIR=/var/tmp/
-
 # To provide flexibility in the jobs, we have the ability to set any
 # parameters that will be supplied on the ansible-playbook CLI.
 export ANSIBLE_PARAMETERS=${ANSIBLE_PARAMETERS:--v}
-
-# Pin RPC-Release to 14.3
-export RPC_RELEASE="r14.3.0"
-

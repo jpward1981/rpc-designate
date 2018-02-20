@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Copyright 2014-2017, Rackspace US, Inc.
+# Copyright 2014-2018, Rackspace US, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,35 +19,30 @@ set -e -u -x
 set -o pipefail
 
 export BASE_DIR=${BASE_DIR:-"/opt/rpc-openstack"}
-source ${BASE_DIR}/scripts/functions.sh
+export MY_BASE_DIR=${MY_BASE_DIR:-"/opt/rpc-designate"}
 export DESIGNATE_DEPLOY_OPS="-e @/opt/rpc-designate/playbooks/group_vars/designate_all.yml "
 
-# Perform peliminary configurations for Designate
-run_ansible /opt/rpc-designate/playbooks/setup-designate.yml
+source ${BASE_DIR}/scripts/functions.sh
+source ${MY_BASE_DIR}/scripts/functions.sh
 
-# ReBootstrap ansible to add the os_designate role to ansible
-${BASE_DIR}/scripts/bootstrap-ansible.sh
-
-cd /opt/rpc-openstack/openstack-ansible/playbooks/
-
-# build container
-run_ansible lxc-containers-create.yml --limit designate_all
-run_ansible openstack-hosts-setup.yml --tags openstack_hosts-config
-
-if [[ "${DEPLOY_AIO}" == "yes" ]]; then
-  run_ansible /opt/rpc-designate/playbooks/setup-bind.yml
-  export DESIGNATE_DEPLOY_OPS=${DESIGNATE_DEPLOY_OPS}"-e @/opt/rpc-designate/playbooks/files/aio/pools.yml.aio "
+# We need to determine the product release if this is not already set  
+if [[ -z ${RPC_PRODUCT_RELEASE+x} ]]; then
+  determine_release
 fi
 
-# install designate
-run_ansible ${DESIGNATE_DEPLOY_OPS} -e "designate_developer_mode=True" /opt/rpc-designate/playbooks/os-designate-install.yml
+# Perform peliminary configurations for Designate
+setup_designate 
+deploy_container
+# If we are running and AIO, deploy the local name server
+if [[ "${DEPLOY_AIO}" == "yes" ]]; then
+  deploy_bind
+fi
+
+# Install Designate
+deploy_designate
 
 # add service to haproxy
-run_ansible ${DESIGNATE_DEPLOY_OPS} haproxy-install.yml 
+openstack-ansible ${DESIGNATE_DEPLOY_OPS} haproxy-install.yml
 
 # open ports for designate-mdns
-run_ansible ${DESIGNATE_DEPLOY_OPS} /opt/rpc-designate/playbooks/setup-infra-firewall-mdns.yml
-
-# add filebeat to service so we get logging
-cd /opt/rpc-openstack/
-run_ansible /opt/rpc-openstack/rpcd/playbooks/filebeat.yml --limit designate_all
+openstack-ansible ${DESIGNATE_DEPLOY_OPS} /opt/rpc-designate/playbooks/setup-infra-firewall-mdns.yml
