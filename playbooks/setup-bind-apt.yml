@@ -1,4 +1,4 @@
-# Copyright 2014-2017, Rackspace US, Inc.
+# Copyright 2014-2018, Rackspace US, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,14 +19,21 @@
   apt:
     name: bind9
     state: present
+  register: bind_installed
+  ignore_errors: yes
 
+- name: Install BIND fallback method
+  command: sudo apt-get install -y bind9
+  when: bind_installed | failed
+  
 - name: Install named configuration file
   template: 
-    src: ../files/aio/named.conf.j2
+    src: ../files/named.conf.j2
     dest: /etc/bind/named.conf.options
     owner: root
     group: root
-
+  notify: Restart BIND
+    
 - name: Create needed directories
   file: 
     name: "{{ item }}"
@@ -36,7 +43,8 @@
   with_items:
     - "/var/cache/bind/data"
     - "/var/cache/bind/dynamic"
-
+  notify: Restart BIND
+  
 - name: Start bind 
   service: 
     name: bind9

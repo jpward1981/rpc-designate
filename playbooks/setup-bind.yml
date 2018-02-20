@@ -16,7 +16,7 @@
   hosts: "{{ lxc_host_group | default('lxc_hosts')}}"
   gather_facts: "{{ gather_facts | default(True) }}"
 
-- name: Install Bind Package for AIO
+- name: Install Bind Package
   hosts: designate_bind_all
   tasks:
     - include: setup-bind-{{ ansible_pkg_mgr }}.yml
@@ -33,6 +33,13 @@
         src: /tmp/rndc.key
         dest: /etc/bind/rndc.key
       notify: Restart BIND
+
+  handlers:
+    - name: Restart BIND
+      service:
+        name: bind9
+        state: restarted
+        
 
 - name: Install rndc.key
   hosts: designate_all
