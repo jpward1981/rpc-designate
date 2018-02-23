@@ -25,16 +25,10 @@ export DESIGNATE_DEPLOY_OPS="-e @/opt/rpc-designate/playbooks/group_vars/designa
 source ${BASE_DIR}/scripts/functions.sh
 source ${MY_BASE_DIR}/scripts/functions.sh
 
-<<<<<<< HEAD
 # We need to determine the product release if this is not already set  
 if [[ -z ${RPC_PRODUCT_RELEASE+x} ]]; then
   determine_release
 fi
-=======
-# build container
-run_ansible lxc-containers-create.yml --limit designate_all:lxc_hosts
-run_ansible openstack-hosts-setup.yml --tags openstack_hosts-config
->>>>>>> 92c7e65... RI-183: Fix missing limit on container create
 
 # Perform peliminary configurations for Designate
 setup_designate 
