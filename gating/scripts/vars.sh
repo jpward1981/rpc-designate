@@ -15,6 +15,7 @@
 
 # The scripts expects the git clone to be at /opt/rpc-designate, so we link
 # the current folder there.
+
 if [[ "${PWD}" != "/opt/rpc-designate" ]]; then
   ln -sfn ${PWD} /opt/rpc-designate
 fi
@@ -35,3 +36,22 @@ export ANSIBLE_ROLE_FETCH_MODE="git-clone"
 # To provide flexibility in the jobs, we have the ability to set any
 # parameters that will be supplied on the ansible-playbook CLI.
 export ANSIBLE_PARAMETERS=${ANSIBLE_PARAMETERS:--v}
+
+# If RE_JOB_SCENARIO is set to functional, we need to change it to newton
+if [ ${RE_JOB_SCENARIO} == 'functional' ]; then
+  export RE_JOB_SCENARIO="newton"
+fi
+
+# Setup a few variables specific to the scenario that we are running
+#case $RE_JOB_SCENARIO in
+#"newton")
+#  # Pin RPC-Release to 14.3 for newton
+#  export RPC_RELEASE="r14.3.0"
+#  export RPC_PRODUCT_RELEASE=${RE_JOB_SCENARIO}
+#  export OSA_BASE_DIR=${OS_BASE_DIR}/openstack-ansible
+#  ;;
+#"pike")
+#  export RPC_RELEASE="r16.0.0"
+#  export RPC_PRODUCT_RELEASE=${RE_JOB_SCENARIO}
+#  export OSA_BASE_DIR=${OS_BASE_DIR}/openstack-ansible
+#esac
