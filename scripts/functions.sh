@@ -42,12 +42,15 @@ function deploy_container {
 }
 
 function determine_release { 
-    if [[ -z $RPC_RELEASE ]]; then
-        echo "Unable to determine rpc release"
-        exit
+    # If we have openstack deployed, there should be a /etc/openstack-release file created
+    # lets read what is in there and set the variables as needed. 
+    if [[ -f /etc/openstack-release ]]; then
+        source /etc/openstack-release
+        export RPC_PRODUCT_RELEASE=${DISTRIB_CODENAME,,}
     else
-        # For now setting to newton if RPC_PRODUCT_RELEASE is not set
-        export RPC_PRODUCT_RELEASE="newton"
+        echo "Unable to determine version of OpenStack Installed"
+        echo "Please set the RPC_PRODUCT_RELEASE variables and re-run"
+        exit
     fi
 }
 
