@@ -51,11 +51,18 @@ if [[ ! ${RE_JOB_IMAGE} =~ _snapshot$ ]]; then
   "queens")
     gate_determine_branch
     export RPC_PRODUCT_RELEASE=${RE_JOB_SCENARIO}
-    export RPC_RELEASE=master
+    export RPC_RELEASE=queens
     export OSA_BASE_DIR=${OS_BASE_DIR}/openstack-ansible
     clone_openstack
     gate_deploy_${RE_JOB_SCENARIO}
   ;;
+  "rocky")
+    gate_determine_branch
+    export RPC_PRODUCT_RELEASE=${RE_JOB_SCENARIO}
+    export RPC_RELEASE=rocky
+    export OSA_BASE_DIR=${OS_BASE_DIR}/openstack-ansible
+    clone_openstack
+    gate_deploy_${RE_JOB_SCENARIO}
   esac
 fi
 
