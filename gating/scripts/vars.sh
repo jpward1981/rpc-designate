@@ -17,7 +17,7 @@
 # the current folder there.
 
 if [[ "${PWD}" != "/opt/rpc-designate" ]]; then
-  ln -sfn ${PWD} /opt/rpc-designate
+    ln -sfn ${PWD} /opt/rpc-designate
 fi
 
 # Use and AIO for gate testing

@@ -27,11 +27,11 @@ source ${MY_BASE_DIR}/scripts/functions.sh
 
 # We need to determine the product release if this is not already set  
 if [[ -z ${RPC_PRODUCT_RELEASE+x} ]]; then
-  determine_release
+    determine_release
 fi
 
 # Perform peliminary configurations for Designate
-setup_designate 
+setup_designate
 deploy_container
 deploy_bind
 

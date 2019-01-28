@@ -14,9 +14,9 @@
 # limitations under the License.
 
 clone_openstack() {
-  if [ ! -d ${OS_BASE_DIR} ]; then
-    git clone --recursive -b ${RPC_RELEASE} https://github.com/rcbops/rpc-openstack ${OS_BASE_DIR}
-  fi
+    if [ ! -d ${OS_BASE_DIR} ]; then
+        git clone --recursive -b ${RPC_RELEASE} https://github.com/rcbops/rpc-openstack ${OS_BASE_DIR}
+    fi
 }
 
 gate_determine_branch() {
@@ -24,61 +24,48 @@ gate_determine_branch() {
   # of openstack that we need to deploy against. The branch can be determined by looking at the 
   # RE_JOB_BRANCH variable. If the RE_JOB_BRANCH is not set as in the PreMerge Jobs lets set a defult
   # to use master as the branch as that would be were we are doing to development
-  export RE_JOB_BRANCH=${RE_JOB_BRANCH:-master}
-  if [ ${RE_JOB_BRANCH} == 'master' ]; then
-    export RPC_RELEASE=${RE_JOB_SCENARIO}
-  elif [ ${RE_JOB_BRANCH} == 'master-rc' ]; then
-    export RPC_RELEASE="${RE_JOB_SCENARIO}-rc"
-  fi
+    export RE_JOB_BRANCH=${RE_JOB_BRANCH:-master}
+    if [ ${RE_JOB_BRANCH} == 'master' ]; then
+        export RPC_RELEASE=${RE_JOB_SCENARIO}
+    elif [ ${RE_JOB_BRANCH} == 'master-rc' ]; then
+        export RPC_RELEASE="${RE_JOB_SCENARIO}-rc"
+    fi
 }
 
-gate_deploy_pike() {
+gate_deploy() {
   # As a gating requirement we need to make sure that the pyhon-yaml packages are installed
   # so we can read the version of the release
-  dpkg-query -l python-yaml > /dev/null
-  if [[ $? -eq 1 ]]; then
-    apt-get -y install python-yaml
-  fi
- 
-  # for now we are just going to deploy using the deployment script
-  cd ${OS_BASE_DIR}
-  scripts/deploy.sh
-}
+    dpkg-query -l python-yaml > /dev/null
+    if [[ $? -eq 1 ]]; then
+        apt-get -y install python-yaml
+    fi
 
-gate_deploy_queens() {
-  # As a gating requirement we need to make sure that the pyhon-yaml packages are installed
-  # so we can read the version of the release
-  dpkg-query -l python-yaml > /dev/null
-  if [[ $? -eq 1 ]]; then
-    apt-get -y install python-yaml
-  fi
- 
   # for now we are just going to deploy using the deployment script
-  cd ${OS_BASE_DIR}
-  scripts/deploy.sh
+    cd ${OS_BASE_DIR}
+    scripts/deploy.sh
 }
 
 gate_deploy_newton() {
-  # fixup a couple packages for keystone compatibility
-  echo "python-ldap==2.5.2" >> ${OSA_BASE_DIR}/global-requirement-pins.txt
-  echo "Flask!=0.11,<1.0,>=0.10" >> ${OSA_BASE_DIR}/global-requirement-pins.txt
-  
-  # Make sure that we are in the base dir and deploy openstack aio
-  cd ${OS_BASE_DIR}
-  
-  # Setup ansible for the environment
-  scripts/bootstrap-ansible.sh
+    # fixup a couple packages for keystone compatibility
+    echo "python-ldap==2.5.2" >> ${OSA_BASE_DIR}/global-requirement-pins.txt
+    echo "Flask!=0.11,<1.0,>=0.10" >> ${OSA_BASE_DIR}/global-requirement-pins.txt
 
-  # Setup the aio environment
-  scripts/bootstrap-aio.sh
+    # Make sure that we are in the base dir and deploy openstack aio
+    cd ${OS_BASE_DIR}
 
-  cd ${OS_BASE_DIR}/openstack-ansible
-  # Configure Host for openstack
-  openstack-ansible playbooks/setup-hosts.yml
+    # Setup ansible for the environment
+    scripts/bootstrap-ansible.sh
 
-  # Configure Infrastructure for Openstack
-  openstack-ansible playbooks/setup-infrastructure.yml
+    # Setup the aio environment
+    scripts/bootstrap-aio.sh
 
-  # Keystone is the only openstack service that we need installed
-  openstack-ansible playbooks/os-keystone-install.yml
+    cd ${OS_BASE_DIR}/openstack-ansible
+    # Configure Host for openstack
+    openstack-ansible playbooks/setup-hosts.yml
+
+    # Configure Infrastructure for Openstack
+    openstack-ansible playbooks/setup-infrastructure.yml
+
+    # Keystone is the only openstack service that we need installed
+    openstack-ansible playbooks/os-keystone-install.yml
 }

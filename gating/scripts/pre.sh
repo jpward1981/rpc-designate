@@ -30,40 +30,26 @@ echo "+-------------------- START ENV VARS --------------------+"
 # necessary OpenStack infrastructure and services.
 if [[ ! ${RE_JOB_IMAGE} =~ _snapshot$ ]]; then
 
-  # Install required prerequisites
-  apt-get -y install python-yaml
+    # Install required prerequisites
+    apt-get -y install python-yaml
 
-  case $RE_JOB_SCENARIO in
-  "newton")
-    gate_determine_branch
-    export RPC_PRODUCT_RELEASE=${RE_JOB_SCENARIO}
-    export OSA_BASE_DIR=${OS_BASE_DIR}/openstack-ansible
-    clone_openstack
-    gate_deploy_newton
-  ;;
-  "pike")
-    gate_determine_branch
-    export RPC_PRODUCT_RELEASE=${RE_JOB_SCENARIO}
-    export OSA_BASE_DIR=${OS_BASE_DIR}/openstack-ansible
-    clone_openstack
-    gate_deploy_${RE_JOB_SCENARIO}
-  ;;
-  "queens")
-    gate_determine_branch
-    export RPC_PRODUCT_RELEASE=${RE_JOB_SCENARIO}
-    export RPC_RELEASE=queens
-    export OSA_BASE_DIR=${OS_BASE_DIR}/openstack-ansible
-    clone_openstack
-    gate_deploy_${RE_JOB_SCENARIO}
-  ;;
-  "rocky")
-    gate_determine_branch
-    export RPC_PRODUCT_RELEASE=${RE_JOB_SCENARIO}
-    export RPC_RELEASE=rocky
-    export OSA_BASE_DIR=${OS_BASE_DIR}/openstack-ansible
-    clone_openstack
-    gate_deploy_${RE_JOB_SCENARIO}
-  esac
+    case $RE_JOB_SCENARIO in
+    "newton")
+        gate_determine_branch
+        export RPC_PRODUCT_RELEASE=${RE_JOB_SCENARIO}
+        export OSA_BASE_DIR=${OS_BASE_DIR}/openstack-ansible
+        clone_openstack
+        gate_deploy_newton
+        ;;
+    *)
+        gate_determine_branch
+        export RPC_PRODUCT_RELEASE=${RE_JOB_SCENARIO}
+        export RPC_RELEASE=${RE_JOB_SCENARIO}
+        export OSA_BASE_DIR=${OS_BASE_DIR}/openstack-ansible
+        clone_openstack
+        gate_deploy
+        ;;
+    esac
 fi
 
 # Install Designate

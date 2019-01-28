@@ -29,17 +29,17 @@ echo "+-------------------- START ENV VARS --------------------+"
 # Setup a few variables specific to the scenario that we are running
 case $RE_JOB_SCENARIO in
 "newton")
-  # Run tests
-  export RPC_PRODUCT_RELEASE=${RE_JOB_SCENARIO}
-  echo "RUN DESIGNATE. TESTS FOR NEWTON"
-  openstack-ansible ${MY_BASE_DIR}/gating/scripts/test_designate.yml \
-                    ${ANSIBLE_PARAMETERS}
-  ;;
+    # Run tests
+    export RPC_PRODUCT_RELEASE=${RE_JOB_SCENARIO}
+    echo "RUN DESIGNATE. TESTS FOR NEWTON"
+    openstack-ansible ${MY_BASE_DIR}/gating/scripts/test_designate.yml \
+                      ${ANSIBLE_PARAMETERS}
+    ;;
 "pike"|"queens")
-  export RPC_PRODUCT_RELEASE=${RE_JOB_SCENARIO}
-  openstack-ansible ${MY_BASE_DIR}/gating/scripts/test_designate.yml \
-                    ${ANSIBLE_PARAMETERS}
-  ;;
+    export RPC_PRODUCT_RELEASE=${RE_JOB_SCENARIO}
+    openstack-ansible ${MY_BASE_DIR}/gating/scripts/test_designate.yml \
+                      ${ANSIBLE_PARAMETERS}
+    ;;
 esac
 
 echo "Gate job ended"

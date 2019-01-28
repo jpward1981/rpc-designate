@@ -27,7 +27,7 @@ function deploy_bind {
 function deploy_designate {
     if [[ ${RPC_PRODUCT_RELEASE} == 'newton' ]]; then
         openstack-ansible ${DESIGNATE_DEPLOY_OPS} -e "designate_developer_mode=True" /opt/rpc-designate/playbooks/os-designate-install.yml
-    else 
+    else
         openstack-ansible ${DESIGNATE_DEPLOY_OPS} /opt/openstack-ansible/playbooks/os-designate-install.yml
     fi
 }
@@ -43,7 +43,7 @@ function deploy_container {
 }
 
 
-function determine_release { 
+function determine_release {
     if [[ -z $RPC_RELEASE ]]; then
         echo "Unable to determine rpc release"
         exit
