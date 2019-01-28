@@ -32,20 +32,7 @@ gate_determine_branch() {
   fi
 }
 
-gate_deploy_pike() {
-  # As a gating requirement we need to make sure that the pyhon-yaml packages are installed
-  # so we can read the version of the release
-  dpkg-query -l python-yaml > /dev/null
-  if [[ $? -eq 1 ]]; then
-    apt-get -y install python-yaml
-  fi
- 
-  # for now we are just going to deploy using the deployment script
-  cd ${OS_BASE_DIR}
-  scripts/deploy.sh
-}
-
-gate_deploy_queens() {
+gate_deploy() {
   # As a gating requirement we need to make sure that the pyhon-yaml packages are installed
   # so we can read the version of the release
   dpkg-query -l python-yaml > /dev/null
