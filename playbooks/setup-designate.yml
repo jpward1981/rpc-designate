@@ -15,6 +15,13 @@
 - name: Install Designate
   hosts: localhost
   connection: local
+  vars:
+    - secrets:
+      - "designate_service_password: "
+      - "designate_rabbitmq_password: "
+      - "designate_galera_password: "
+    - oa_dir: "{{ lookup('env', 'OA_DIR') | default('/opt/openstack-ansible')}}"
+    - rpc_release: "{{ lookup('env', 'RPC_RELEASE') }}"
   tasks:
     - name: Add designate role
       blockinfile:
@@ -97,9 +104,3 @@
         src: templates/designate_pools.yml.j2 
         dest: /etc/openstack_deploy/designate_pools.yml
 
-  vars:
-    secrets:
-      - "designate_service_password: "
-      - "designate_rabbitmq_password: "
-      - "designate_galera_password: "
-    oa_dir: "{{ lookup('env', 'OA_DIR') | default('/opt/openstack-ansible')}}"
