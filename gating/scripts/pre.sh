@@ -64,10 +64,11 @@ if [[ ! ${RE_JOB_IMAGE} =~ _snapshot$ ]]; then
     clone_openstack
     gate_deploy_${RE_JOB_SCENARIO}
   esac
-fi
 
-# Install Designate
-cd ${MY_BASE_DIR}
-${MY_BASE_DIR}/scripts/deploy.sh
+else
+  # Install Designate when snapshot scenario
+  cd ${MY_BASE_DIR}
+  ${MY_BASE_DIR}/scripts/deploy.sh
+fi
 
 echo "Pre gate job ended"
