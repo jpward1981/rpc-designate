@@ -28,9 +28,10 @@ echo "+-------------------- START ENV VARS --------------------+"
 
 # If we're not using a pre-saved rpc-openstack image, then deploy the
 # necessary OpenStack infrastructure and services.
-if [[ ! ${RE_JOB_IMAGE} =~ _snapshot$ ]]; then
+if [[ ! ${RE_JOB_IMAGE} =~ _snapshot$ && ${RE_JOB_NAME} =~ ^PM.*$ ]]; then
 
   # Install required prerequisites
+  apt-get update
   apt-get -y install python-yaml
 
   case $RE_JOB_SCENARIO in
