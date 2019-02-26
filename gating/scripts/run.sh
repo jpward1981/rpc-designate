@@ -35,7 +35,7 @@ case $RE_JOB_SCENARIO in
   openstack-ansible ${MY_BASE_DIR}/gating/scripts/test_designate.yml \
                     ${ANSIBLE_PARAMETERS}
   ;;
-"pike"|"queens")
+*)
   export RPC_PRODUCT_RELEASE=${RE_JOB_SCENARIO}
   openstack-ansible ${MY_BASE_DIR}/gating/scripts/test_designate.yml \
                     ${ANSIBLE_PARAMETERS}
